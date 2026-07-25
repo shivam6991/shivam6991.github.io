@@ -1,0 +1,16 @@
+# This file contains your social media links and usernames.
+# The icons are displayed at the bottom of your about page, in the order below.
+# See the jekyll-socials plugin for all supported keys: https://github.com/george-gca/jekyll-socials
+# Fill in a value to show an icon; leave a line commented out to hide it.
+
+email: shivam361996@gmail.com # your email address
+github_username: shivam6991 # your GitHub username
+# linkedin_username: your-linkedin-id # the part after linkedin.com/in/
+# x_username: your-handle # X / Twitter handle (without the @)
+# mastodon_username: your@instance.social
+# scholar_userid: XXXXXXXXXXXX # your Google Scholar user ID (from the scholar profile URL)
+# orcid_id: 0000-0000-0000-0000 # your ORCID iD
+# researchgate_profile: Your-Profile # ResearchGate profile name
+# medium_username: your-handle # Medium username (without the @)
+
+rss_icon: true # comment this line to hide the RSS icon

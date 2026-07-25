@@ -1,0 +1,66 @@
+{
+  "basics": {
+    "name": "Shivam Kumar",
+    "label": "Engineer & Researcher",
+    "image": "",
+    "email": "shivam361996@gmail.com",
+    "phone": "",
+    "url": "https://shivam6991.github.io",
+    "summary": "Engineer and researcher working across machine learning and embedded systems. Edit this summary and the sections below in assets/json/resume.json.",
+    "location": {
+      "city": "Your City",
+      "countryCode": "IN",
+      "region": ""
+    },
+    "profiles": [
+      {
+        "network": "GitHub",
+        "username": "shivam6991",
+        "url": "https://github.com/shivam6991"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Company / Lab",
+      "position": "Your Role",
+      "url": "",
+      "startDate": "2023-01-01",
+      "endDate": "",
+      "summary": "One line about what you do here.",
+      "highlights": ["A notable thing you shipped or researched.", "Another highlight."]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Your University",
+      "url": "",
+      "area": "Your Field",
+      "studyType": "B.Tech / M.S. / Ph.D.",
+      "startDate": "2019-01-01",
+      "endDate": "2023-01-01",
+      "score": "",
+      "courses": []
+    }
+  ],
+  "publications": [],
+  "projects": [],
+  "volunteer": [],
+  "awards": [],
+  "certificates": [],
+  "skills": [
+    {
+      "name": "Machine Learning",
+      "level": "",
+      "keywords": ["PyTorch", "Deep Learning", "NLP"]
+    },
+    {
+      "name": "Embedded Systems",
+      "level": "",
+      "keywords": ["C/C++", "ESP32", "Firmware"]
+    }
+  ],
+  "languages": [],
+  "interests": [],
+  "references": []
+}
