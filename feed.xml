@@ -1,4 +1,317 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://shivam6991.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://shivam6991.github.io/" rel="alternate" type="text/html" hreflang="en"/><updated>2026-07-25T16:58:32+00:00</updated><id>https://shivam6991.github.io/feed.xml</id><title type="html">blank</title><subtitle>Personal website and tech blog of Shivam Kumar — notes on machine learning, embedded systems, and things I build. </subtitle><entry><title type="html">Welcome to my blog</title><link href="https://shivam6991.github.io/blog/2026/welcome/" rel="alternate" type="text/html" title="Welcome to my blog"/><published>2026-07-25T04:30:00+00:00</published><updated>2026-07-25T04:30:00+00:00</updated><id>https://shivam6991.github.io/blog/2026/welcome</id><content type="html" xml:base="https://shivam6991.github.io/blog/2026/welcome/"><![CDATA[<p>Welcome 👋 This is the first post on my new site.</p> <p>I plan to use this space as a lab notebook — short technical notes, longer write-ups when I dig into something, and the occasional project retrospective. Topics will mostly orbit <strong>machine learning</strong> and <strong>embedded systems</strong>, plus whatever else I happen to be building.</p> <h3 id="adding-a-new-post">Adding a new post</h3> <p>Posts live in the <code class="language-plaintext highlighter-rouge">_posts/</code> folder as Markdown files named <code class="language-plaintext highlighter-rouge">YYYY-MM-DD-title.md</code>. The bit at the top between the <code class="language-plaintext highlighter-rouge">---</code> lines is the <em>front matter</em> — it sets the title, date, description, and tags:</p> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://shivam6991.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://shivam6991.github.io/" rel="alternate" type="text/html" hreflang="en"/><updated>2026-08-29T06:13:13+00:00</updated><id>https://shivam6991.github.io/feed.xml</id><title type="html">blank</title><subtitle>Personal website and tech blog of Shivam Kumar — notes on machine learning, embedded systems, and things I build. </subtitle><entry><title type="html">LLM Inference — A Learning Path</title><link href="https://shivam6991.github.io/blog/2026/llm-inference-learning-path/" rel="alternate" type="text/html" title="LLM Inference — A Learning Path"/><published>2026-08-29T04:30:00+00:00</published><updated>2026-08-29T04:30:00+00:00</updated><id>https://shivam6991.github.io/blog/2026/llm-inference-learning-path</id><content type="html" xml:base="https://shivam6991.github.io/blog/2026/llm-inference-learning-path/"><![CDATA[<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"/> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <title>LLM Inference — A Learning Path</title> <meta name="description" content="A curated, sequential reading path for learning LLM inference: foundations, transformers, GPU hardware, optimization techniques, and inference engines."/> <link rel="preconnect" href="https://fonts.googleapis.com"/> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/> <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/> <style>
+  :root {
+    --ink: #10141a;
+    --ink-soft: #4a5563;
+    --ink-faint: #7a8595;
+    --paper: #edeff2;
+    --card: #fbfcfd;
+    --line: #d3d9e0;
+    --line-soft: #e3e7ec;
+    --cobalt: #1b39d6;
+    --cobalt-deep: #14259a;
+
+    --disp: "Space Grotesk", system-ui, sans-serif;
+    --body: "Newsreader", Georgia, serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  a { color: var(--cobalt); text-decoration: none; }
+  a:hover { color: var(--cobalt-deep); }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- HERO ---------- */
+  header.hero { border-bottom: 1px solid var(--line); padding: 68px 0 40px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 26px;
+  }
+  .eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  h1.title {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: clamp(38px, 7.2vw, 74px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0 0 22px;
+  }
+  h1.title .brk { display: block; }
+  h1.title em { font-style: normal; color: var(--cobalt); }
+  .lede {
+    font-size: clamp(19px, 2.4vw, 23px);
+    max-width: 40ch;
+    color: var(--ink-soft);
+    margin: 0 0 34px;
+  }
+  .specstrip {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--card);
+    width: fit-content;
+    max-width: 100%;
+  }
+  .specstrip .cell {
+    padding: 12px 20px;
+    border-right: 1px solid var(--line-soft);
+    font-family: var(--mono);
+  }
+  .specstrip .cell:last-child { border-right: 0; }
+  .specstrip .k {
+    display: block;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 3px;
+  }
+  .specstrip .v { font-size: 18px; font-weight: 600; color: var(--ink); }
+  .provenance {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    margin-top: 26px;
+    line-height: 1.6;
+    max-width: 74ch;
+  }
+
+  /* ---------- LAYOUT ---------- */
+  .layout {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 56px;
+    padding: 52px 0 40px;
+    align-items: start;
+  }
+
+  /* ---------- SIGNAL-CHAIN NAV ---------- */
+  nav.chain { position: sticky; top: 32px; font-family: var(--mono); }
+  nav.chain .chain-label {
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 18px;
+  }
+  nav.chain ol { list-style: none; margin: 0; padding: 0; position: relative; }
+  nav.chain ol::before {
+    content: "";
+    position: absolute;
+    left: 11px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: var(--line);
+  }
+  nav.chain li { position: relative; margin-bottom: 4px; }
+  nav.chain a {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 7px 8px 7px 0;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  nav.chain a .dot {
+    flex: 0 0 auto;
+    width: 23px; height: 23px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--ink-faint);
+    font-size: 11px;
+    font-weight: 600;
+    display: grid;
+    place-items: center;
+    transition: all 0.2s ease;
+  }
+  nav.chain a:hover { color: var(--ink); }
+  nav.chain a:hover .dot { border-color: var(--cobalt); color: var(--cobalt); }
+  nav.chain li.active a { color: var(--ink); }
+  nav.chain li.active a .dot { background: var(--cobalt); border-color: var(--cobalt); color: #fff; }
+
+  /* ---------- STAGES ---------- */
+  main { min-width: 0; }
+  .stage { padding-bottom: 56px; scroll-margin-top: 24px; }
+  .stage-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 10px; }
+  .stage-num {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cobalt);
+    padding-top: 6px;
+  }
+  .stage-title {
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: clamp(24px, 3.6vw, 32px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0;
+  }
+  .stage-desc { color: var(--ink-soft); margin: 0 0 22px; max-width: 58ch; }
+
+  .topics { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 26px; }
+  .topics .chip {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    border-radius: 3px;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+
+  /* ---------- RESOURCE CARDS ---------- */
+  .res {
+    display: block;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .res:hover {
+    border-color: var(--cobalt);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px -14px rgba(27, 57, 214, 0.5);
+  }
+  .res-top { display: flex; align-items: center; gap: 12px; margin-bottom: 9px; flex-wrap: wrap; }
+  .res-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    letter-spacing: 0.04em;
+  }
+  .res-domain {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-left: auto;
+    word-break: break-all;
+  }
+  .res-title {
+    font-family: var(--disp);
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.25;
+    margin: 0 0 6px;
+  }
+  .res:hover .res-title { color: var(--cobalt-deep); }
+  .res-summary { font-size: 16.5px; color: var(--ink-soft); margin: 0; line-height: 1.55; }
+  .res-summary .byline { color: var(--ink-faint); font-style: italic; }
+
+  /* ---------- PULLQUOTE ---------- */
+  .pullquote {
+    border-left: 3px solid var(--cobalt);
+    padding: 4px 0 4px 26px;
+    margin: 8px 0 48px;
+    font-family: var(--disp);
+    font-weight: 500;
+    font-size: clamp(21px, 3vw, 28px);
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    max-width: 34ch;
+  }
+  .pullquote span { color: var(--ink-faint); }
+
+  /* ---------- FOOTER ---------- */
+  .notes { border-top: 1px solid var(--line); padding: 40px 0 80px; }
+  .notes h2 {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    margin: 0 0 18px;
+  }
+  .notes p { max-width: 68ch; color: var(--ink-soft); font-size: 16.5px; margin: 0 0 16px; }
+  .colophon {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 22px;
+    margin-top: 24px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 820px) {
+    body { font-size: 17px; }
+    .layout { grid-template-columns: 1fr; gap: 0; padding-top: 36px; }
+    nav.chain {
+      position: static;
+      margin-bottom: 40px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+    }
+    nav.chain ol { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 20px; }
+    nav.chain ol::before { display: none; }
+    .res-domain { margin-left: 0; width: 100%; order: 3; }
+  }
+  @media (max-width: 480px) {
+    .wrap { padding: 0 18px; }
+    nav.chain ol { grid-template-columns: 1fr; }
+    .specstrip { width: 100%; }
+    .specstrip .cell { flex: 1 1 auto; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+</style> </head> <body> <header class="hero"> <div class="wrap"> <div class="eyebrow">Curated reading path &middot; LLM inference</div> <h1 class="title"><span class="brk">Learning LLM</span><span class="brk"><em>inference</em>, in order.</span></h1> <p class="lede">Five stages, foundations first. Work down the chain instead of jumping to the fast tricks.</p> <div class="specstrip"> <div class="cell"><span class="k">Stages</span><span class="v">5</span></div> <div class="cell"><span class="k">Resources</span><span class="v">14</span></div> <div class="cell"><span class="k">Summarized</span><span class="v">14</span></div> <div class="cell"><span class="k">Order</span><span class="v">Sequential</span></div> </div> <p class="provenance"> Adapted from a LinkedIn post on learning LLM inference. Eleven of the fourteen links are posts from Paolo Perrone&rsquo;s <em>Hardware &amp; Inference</em> series on The AI Engineer; the other three are standalone resources by Brendan Bycroft, Horace He, and Aleksa Gordi&#263;. Each entry below was opened and summarized directly. </p> </div> </header> <div class="wrap"> <div class="layout"> <nav class="chain" aria-label="Learning stages"> <div class="chain-label">Signal chain</div> <ol> <li><a href="#stage-1"><span class="dot">1</span> Foundations</a></li> <li><a href="#stage-2"><span class="dot">2</span> Transformers</a></li> <li><a href="#stage-3"><span class="dot">3</span> GPU &amp; hardware</a></li> <li><a href="#stage-4"><span class="dot">4</span> Optimization</a></li> <li><a href="#stage-5"><span class="dot">5</span> Engines</a></li> </ol> </nav> <main> <section class="stage" id="stage-1"> <div class="stage-head"> <span class="stage-num">01</span> <h2 class="stage-title">Foundations of LLM inference</h2> </div> <p class="stage-desc">Every LLM call follows this path. Get the vocabulary and the request lifecycle down before anything else.</p> <div class="topics"> <span class="chip">Tokenization</span> <span class="chip">Forward pass</span> <span class="chip">Autoregressive generation</span> <span class="chip">Prefill &amp; decode</span> <span class="chip">KV cache</span> <span class="chip">TTFT &amp; ITL</span> <span class="chip">Throughput vs latency</span> </div> <a class="res" href="https://theaiengineer.substack.com/p/what-is-inference" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">01&middot;A</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">What is Inference?</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> Why reading is fast and writing is slow: inference splits into a parallel prefill (the whole prompt in one pass) and a serial decode (one token at a time), and nearly every cost, latency, and KV-cache question traces back to that difference.</p> </a> <a class="res" href="https://theaiengineer.substack.com/p/why-is-inference-slow-and-expensive" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">01&middot;B</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">Why is Inference Slow and Expensive?</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> The economics: decode is bound by memory bandwidth, not compute (the &ldquo;memory wall&rdquo;), which is why output tokens cost several times more than input, why a faster GPU alone doesn&rsquo;t help, and why the KV cache makes long conversations more expensive.</p> </a> </section> <section class="stage" id="stage-2"> <div class="stage-head"> <span class="stage-num">02</span> <h2 class="stage-title">Basic transformer concepts</h2> </div> <p class="stage-desc">You don&rsquo;t need to become a transformer researcher &mdash; but you should understand the computations inference engines are optimizing.</p> <div class="topics"> <span class="chip">Transformer block</span> <span class="chip">Embeddings</span> <span class="chip">Self-attention</span> <span class="chip">QKV vectors</span> </div> <a class="res" href="https://bbycroft.net/llm" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">02&middot;A</span><span class="res-domain">bbycroft.net/llm</span></div> <p class="res-title">LLM Visualization</p> <p class="res-summary"><span class="byline">Brendan Bycroft.</span> An interactive 3D walkthrough of a GPT-style model running a single-token inference. Rotate and zoom through embeddings, self-attention, the QKV projections, and the feed-forward layers, right down to individual multiply-adds. Best on desktop.</p> </a> </section> <section class="stage" id="stage-3"> <div class="stage-head"> <span class="stage-num">03</span> <h2 class="stage-title">GPU &amp; hardware fundamentals</h2> </div> <p class="stage-desc">Most inference bottlenecks are hardware bottlenecks. Understanding the GPU changes how you reason about performance.</p> <div class="topics"> <span class="chip">GPU architecture</span> <span class="chip">Streaming Multiprocessors</span> <span class="chip">HBM vs SRAM</span> <span class="chip">Memory bandwidth</span> <span class="chip">FLOPS</span> <span class="chip">Compute-bound vs memory-bound</span> </div> <a class="res" href="https://theaiengineer.substack.com/p/what-is-a-gpu" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">03&middot;A</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">What is a GPU?</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> The chip&rsquo;s internals for AI: streaming multiprocessors, CUDA cores, tensor cores, and HBM &mdash; and why memory bandwidth and VRAM capacity matter more than raw TFLOPS for most inference workloads.</p> </a> <a class="res" href="https://theaiengineer.substack.com/p/why-does-ai-need-a-gpu" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">03&middot;B</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">Why Does AI Need a GPU?</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> The architectural argument: a neural net is billions of independent multiply-adds, the embarrassingly parallel work thousands of simple GPU cores do at once and a few big CPU cores cannot &mdash; plus the cases where a CPU is still the right call.</p> </a> <a class="res" href="https://theaiengineer.substack.com/p/h100-vs-h200-vs-b200" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">03&middot;C</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">H100 vs H200 vs B200</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> A buyer&rsquo;s framework across NVIDIA&rsquo;s three current datacenter GPUs, decided in priority order by memory capacity, bandwidth, compute, and NVLink: H100 for $/token, H200 for bandwidth-bound decode, B200 for FP4 and rack scale.</p> </a> <a class="res" href="https://theaiengineer.substack.com/p/why-your-multi-gpu-training-job-keeps" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">03&middot;D</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">Why Your Multi-GPU Training Job Keeps Dying</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> The four ways a small multi-GPU run kills itself &mdash; NCCL sync timeouts, one straggler GPU, uneven per-rank memory, un-resumable checkpoints &mdash; and the per-rank logging that names which one before you need it. (Training-side, but the same GPU/collective mechanics.)</p> </a> <a class="res" href="https://horace.io/brrr_intro.html" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">03&middot;E</span><span class="res-domain">horace.io/brrr_intro.html</span></div> <p class="res-title">Making Deep Learning Go Brrrr From First Principles</p> <p class="res-summary"><span class="byline">Horace He (2022).</span> Decomposes deep-learning runtime into three regimes &mdash; compute, memory bandwidth, and overhead &mdash; and shows how to tell which one is throttling you, and therefore which optimizations will actually help. The canonical grounding for &ldquo;compute-bound vs memory-bound.&rdquo;</p> </a> </section> <section class="stage" id="stage-4"> <div class="stage-head"> <span class="stage-num">04</span> <h2 class="stage-title">Inference optimization techniques</h2> </div> <p class="stage-desc">How modern inference systems actually get fast &mdash; the techniques the engines in stage 5 are built around.</p> <div class="topics"> <span class="chip">Quantization</span> <span class="chip">PagedAttention</span> <span class="chip">FlashAttention</span> <span class="chip">Chunked prefill</span> <span class="chip">Speculative decoding</span> <span class="chip">Prompt caching</span> <span class="chip">Continuous batching</span> </div> <a class="res" href="https://theaiengineer.substack.com/p/what-is-quantization" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">04&middot;A</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">What is Quantization?</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> Lossy compression for model weights &mdash; the &ldquo;JPEG trick&rdquo; that drops a 70B model from ~140&nbsp;GB to ~35&nbsp;GB. Covers the FP16&rarr;INT4/NF4 mechanics, PTQ vs QAT, why 4-bit keeps ~99% of quality, and where it degrades (small models, math and reasoning).</p> </a> <a class="res" href="https://theaiengineer.substack.com/p/quantization-in-practice-gptq-vs" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">04&middot;B</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">Quantization in Practice: GPTQ vs AWQ vs GGUF</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> The practical format pick, with the punchline that the kernel (Marlin) matters more than the format: AWQ for vLLM on NVIDIA, GGUF Q4_K_M for CPU/Apple, GPTQ if you&rsquo;re already shipping it. Same weights can run 10x apart on the right vs wrong kernel.</p> </a> </section> <section class="stage" id="stage-5"> <div class="stage-head"> <span class="stage-num">05</span> <h2 class="stage-title">Inference engines</h2> </div> <p class="stage-desc">Different engines for different workloads. Match the tool to the shape of the traffic.</p> <div class="topics"> <span class="chip">vLLM &mdash; high-throughput</span> <span class="chip">SGLang &mdash; shared context</span> <span class="chip">llama.cpp &mdash; CPU / edge</span> <span class="chip">TensorRT-LLM &mdash; max NVIDIA</span> </div> <a class="res" href="https://theaiengineer.substack.com/p/vllm-vs-ollama-vs-sglang-vs-tensorrt" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">05&middot;A</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">vLLM vs Ollama vs SGLang vs TensorRT-LLM</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> Head-to-head on the four serving engines: Ollama for local dev, vLLM as the production default (PagedAttention), SGLang when requests share context (RadixAttention), TensorRT-LLM for max NVIDIA throughput &mdash; with a decision tree and the note that TGI is now maintenance-mode.</p> </a> <a class="res" href="https://theaiengineer.substack.com/p/should-you-self-host-inference" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">05&middot;B</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">Should You Self-Host Inference?</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> The economics of hosted API vs managed deployment vs full self-hosting, decided in veto order (sovereignty, people, volume, model access). Breakeven sits near ~2M tokens/day, the MLOps salary dwarfs the GPU, and most teams land on a hybrid.</p> </a> <a class="res" href="https://theaiengineer.substack.com/p/what-breaks-when-you-self-host-an" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">05&middot;C</span><span class="res-domain">theaiengineer.substack.com</span></div> <p class="res-title">What Breaks When You Self-Host an LLM</p> <p class="res-summary"><span class="byline">Paolo Perrone.</span> The four undocumented handoffs that break a self-hosted stack &mdash; an API layer silently dropping a field, a patch-release import break, a monitoring bridge missing the KV-cache metric, and the engine rewinding a request under your own state &mdash; none of which the engine benchmark tests.</p> </a> <a class="res" href="https://www.aleksagordic.com/blog/vllm" target="_blank" rel="noopener"> <div class="res-top"><span class="res-id">05&middot;D</span><span class="res-domain">aleksagordic.com/blog/vllm</span></div> <p class="res-title">Inside vLLM: Anatomy of a High-Throughput LLM Inference System</p> <p class="res-summary"><span class="byline">Aleksa Gordi&#263; (Aug 2025).</span> An inverse-pyramid deep dive into vLLM&rsquo;s V1 engine: the scheduler, PagedAttention, continuous batching, chunked prefill, prefix caching, guided and speculative decoding, disaggregated prefill/decode, multi-GPU/multi-node scaling, the serving layer, and benchmarking with the roofline model. Ties stages 4 and 5 together.</p> </a> </section> <blockquote class="pullquote"> Start at 1. <span>Most people skip to 4 and wonder why nothing clicks.</span> </blockquote> </main> </div> </div> <footer class="notes"> <div class="wrap"> <h2>About this list</h2> <p> A sequential reading path for learning LLM inference, kept in the original post&rsquo;s five-stage order. Work top to bottom: the foundations and hardware stages (1&ndash;3) set up the vocabulary and the memory-bandwidth intuition that the optimization and engine stages (4&ndash;5) depend on. Each stage&rsquo;s chips list the sub-topics it covers. </p> <p> Every link was opened and summarized. One correction worth noting: the quantization-formats post resolves to <span style="font-family:var(--mono);font-size:0.9em;">/quantization-in-practice-gptq-vs</span>, not the <span style="font-family:var(--mono);font-size:0.9em;">-awq</span> variant, which returns 404 &mdash; the working URL is the one linked above. </p> <div class="colophon"> LLM Inference &mdash; A Learning Path &middot; self-contained HTML, drop it anywhere on your site<br/> Fonts: Space Grotesk &middot; Newsreader &middot; IBM Plex Mono (loaded from Google Fonts) </div> </div> </footer> <script>
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('nav.chain li'));
+    var map = {};
+    links.forEach(function (li) {
+      var a = li.querySelector('a');
+      if (a) map[a.getAttribute('href').slice(1)] = li;
+    });
+    var sections = Array.prototype.slice.call(document.querySelectorAll('.stage'));
+    if (!('IntersectionObserver' in window) || !sections.length) return;
+
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          links.forEach(function (li) { li.classList.remove('active'); });
+          var li = map[e.target.id];
+          if (li) li.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(function (s) { obs.observe(s); });
+  })();
+</script> </body> </html>]]></content><author><name></name></author><category term="machine-learning"/><category term="llm"/><category term="inference"/><summary type="html"><![CDATA[A curated, sequential reading path for learning LLM inference — foundations, transformers, GPU hardware, optimization techniques, and inference engines.]]></summary></entry><entry><title type="html">Welcome to my blog</title><link href="https://shivam6991.github.io/blog/2026/welcome/" rel="alternate" type="text/html" title="Welcome to my blog"/><published>2026-07-25T04:30:00+00:00</published><updated>2026-07-25T04:30:00+00:00</updated><id>https://shivam6991.github.io/blog/2026/welcome</id><content type="html" xml:base="https://shivam6991.github.io/blog/2026/welcome/"><![CDATA[<p>Welcome 👋 This is the first post on my new site.</p> <p>I plan to use this space as a lab notebook — short technical notes, longer write-ups when I dig into something, and the occasional project retrospective. Topics will mostly orbit <strong>machine learning</strong> and <strong>embedded systems</strong>, plus whatever else I happen to be building.</p> <h3 id="adding-a-new-post">Adding a new post</h3> <p>Posts live in the <code class="language-plaintext highlighter-rouge">_posts/</code> folder as Markdown files named <code class="language-plaintext highlighter-rouge">YYYY-MM-DD-title.md</code>. The bit at the top between the <code class="language-plaintext highlighter-rouge">---</code> lines is the <em>front matter</em> — it sets the title, date, description, and tags:</p> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
 <span class="na">layout</span><span class="pi">:</span> <span class="s">post</span>
 <span class="na">title</span><span class="pi">:</span> <span class="s">My next post</span>
 <span class="na">date</span><span class="pi">:</span> <span class="s">2026-08-01 10:00:00+0530</span>
