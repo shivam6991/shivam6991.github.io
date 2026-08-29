@@ -51,6 +51,19 @@ categories:
   a { color: var(--cobalt); text-decoration: none; }
   a:hover { color: var(--cobalt-deep); }
 
+  .backlink {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 30px;
+  }
+  .backlink:hover { color: var(--cobalt); }
+
   .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
 
   /* ---------- HERO ---------- */
@@ -313,17 +326,17 @@ categories:
 
 <header class="hero">
   <div class="wrap">
+    <a class="backlink" href="/">&larr; Back to home</a>
     <div class="eyebrow">Curated reading path &middot; LLM inference</div>
     <h1 class="title"><span class="brk">Learning LLM</span><span class="brk"><em>inference</em>, in order.</span></h1>
     <p class="lede">Five stages, foundations first. Work down the chain instead of jumping to the fast tricks.</p>
     <div class="specstrip">
       <div class="cell"><span class="k">Stages</span><span class="v">5</span></div>
       <div class="cell"><span class="k">Resources</span><span class="v">14</span></div>
-      <div class="cell"><span class="k">Summarized</span><span class="v">14</span></div>
       <div class="cell"><span class="k">Order</span><span class="v">Sequential</span></div>
     </div>
     <p class="provenance">
-      Adapted from a LinkedIn post on learning LLM inference. Eleven of the fourteen links are posts from Paolo Perrone&rsquo;s <em>Hardware &amp; Inference</em> series on The AI Engineer; the other three are standalone resources by Brendan Bycroft, Horace He, and Aleksa Gordi&#263;. Each entry below was opened and summarized directly.
+      Adapted from a LinkedIn post on learning LLM inference. Eleven of the fourteen links are posts from Paolo Perrone&rsquo;s <em>Hardware &amp; Inference</em> series on The AI Engineer; the other three are standalone resources by Brendan Bycroft, Horace He, and Aleksa Gordi&#263;.
     </p>
   </div>
 </header>
@@ -525,12 +538,8 @@ categories:
     <p>
       A sequential reading path for learning LLM inference, kept in the original post&rsquo;s five-stage order. Work top to bottom: the foundations and hardware stages (1&ndash;3) set up the vocabulary and the memory-bandwidth intuition that the optimization and engine stages (4&ndash;5) depend on. Each stage&rsquo;s chips list the sub-topics it covers.
     </p>
-    <p>
-      Every link was opened and summarized. One correction worth noting: the quantization-formats post resolves to <span style="font-family:var(--mono);font-size:0.9em;">/quantization-in-practice-gptq-vs</span>, not the <span style="font-family:var(--mono);font-size:0.9em;">-awq</span> variant, which returns 404 &mdash; the working URL is the one linked above.
-    </p>
     <div class="colophon">
-      LLM Inference &mdash; A Learning Path &middot; self-contained HTML, drop it anywhere on your site<br />
-      Fonts: Space Grotesk &middot; Newsreader &middot; IBM Plex Mono (loaded from Google Fonts)
+      <a class="backlink" href="/" style="margin-bottom:0;">&larr; Back to home</a>
     </div>
   </div>
 </footer>
