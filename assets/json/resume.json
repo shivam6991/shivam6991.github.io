@@ -1,18 +1,23 @@
 {
   "basics": {
     "name": "Shivam Kumar",
-    "label": "Engineer & Researcher",
+    "label": "Senior Systems Engineer at Qualcomm",
     "image": "",
     "email": "shivam361996@gmail.com",
-    "phone": "",
+    "phone": "+91 9971753972",
     "url": "https://shivam6991.github.io",
-    "summary": "Engineer and researcher working across machine learning and embedded systems. Edit this summary and the sections below in assets/json/resume.json.",
+    "summary": "Systems engineer with a strong DSP and wireless background (5G NR, Wi-Fi, mmWave, ISAC) now focused on XR edge AI — deploying and optimizing quantized VLMs and low-power multimodal pipelines on Snapdragon XR platforms. Skilled in latency, memory, and power optimization for wearables, with hands-on experience in Python/C++, PyTorch, and embedded prototyping on Raspberry Pi and ESP32.",
     "location": {
-      "city": "Your City",
+      "city": "Bengaluru",
       "countryCode": "IN",
-      "region": ""
+      "region": "Karnataka, India"
     },
     "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "shivam-kumar-67594b26",
+        "url": "https://www.linkedin.com/in/shivam-kumar-67594b26/"
+      },
       {
         "network": "GitHub",
         "username": "shivam6991",
@@ -22,42 +27,213 @@
   },
   "work": [
     {
-      "name": "Company / Lab",
-      "position": "Your Role",
-      "url": "",
-      "startDate": "2023-01-01",
+      "name": "Qualcomm Research India",
+      "position": "Senior Systems Engineer — XR Edge-AI Optimization",
+      "location": "Bengaluru, India",
+      "url": "https://www.qualcomm.com/research",
+      "startDate": "2025-12-01",
       "endDate": "",
-      "summary": "One line about what you do here.",
-      "highlights": ["A notable thing you shipped or researched.", "Another highlight."]
+      "summary": "Project: VLM on Glass — real-time multimodal conversational AI on Snapdragon XR smart glasses.",
+      "highlights": [
+        "Optimized and deployed a quantized Vision-Language Model (VLM) on Snapdragon XR smart glasses for real-time multimodal conversational AI under strict latency, memory, and power constraints.",
+        "Designed quantization-aware calibration pipelines, improving model accuracy (~16% gain on TextVQA) while validating efficient 8/16-bit deployment strategies for edge devices.",
+        "Conducted end-to-end system profiling (camera → preprocessing → model → speech output), cutting perceived latency to ~3s and pinpointing key performance bottlenecks.",
+        "Led power-performance optimization, reducing battery drain (~4.4% → ~2.8% per minute) and extending runtime (~22 → ~36 minutes).",
+        "Contributed to a low-power AI (LPAI) architecture enabling always-on speech recognition via NPU/DSP offloading while minimizing CPU usage.",
+        "Supported multimodal interaction pipelines (voice, camera, sensors) and scalable deployment of on-device ASR models for continuous user interaction."
+      ]
+    },
+    {
+      "name": "Qualcomm Research India",
+      "position": "PHY-Layer Systems Engineer — 5G-Advanced Positioning & 6G ISAC (Location Technology)",
+      "location": "Bengaluru, India",
+      "url": "https://www.qualcomm.com/research",
+      "startDate": "2024-09-01",
+      "endDate": "2026-04-01",
+      "summary": "Project: Location and positioning estimation using the 5G network.",
+      "highlights": [
+        "Developed ML-based positioning solutions using 5G signals, achieving ~10 m accuracy without GPS in challenging environments.",
+        "Built data pipelines and PyTorch models to estimate location from wireless signal measurements.",
+        "Filed 40 patents on advanced positioning, multi-device collaboration, and sensing techniques.",
+        "Worked on LEO satellite navigation and sensing solutions for improved accuracy and tracking."
+      ]
+    },
+    {
+      "name": "Qualcomm Research India",
+      "position": "PHY-Layer Systems Engineer — 802.11 Wi-Fi Standards",
+      "location": "Bengaluru, India",
+      "url": "https://www.qualcomm.com/research",
+      "startDate": "2023-07-01",
+      "endDate": "2024-08-01",
+      "summary": "Project: Wi-Fi 8 (60 GHz + sub-6 GHz) prototype development.",
+      "highlights": [
+        "Designed and simulated an end-to-end communication system including waveform design and signal-quality estimation under real-world impairments.",
+        "Contributed to hardware and firmware development, including signal-processing blocks, synchronization, and RF communication control.",
+        "Built Python automation tools for data analysis and debugging of RTL and firmware.",
+        "Improved beam-tracking performance in high-mobility scenarios by integrating sub-6 GHz assistance."
+      ]
+    },
+    {
+      "name": "Qualcomm Research India",
+      "position": "Summer Intern — Wi-Fi Standards",
+      "location": "Bengaluru, India",
+      "url": "https://www.qualcomm.com/research",
+      "startDate": "2022-06-01",
+      "endDate": "2022-08-01",
+      "summary": "Project: Downlink MU-MIMO precoding for Wi-Fi 8.",
+      "highlights": [
+        "Studied and simulated Tomlinson-Harashima Precoding (THP), a non-linear method based on self-interference cancellation.",
+        "Benchmarked THP against linear precoding with end-to-end WLAN simulations, achieving throughput gains over the linear MMSE precoder."
+      ]
+    },
+    {
+      "name": "Oil and Natural Gas Corporation (ONGC)",
+      "position": "Electrical Engineer",
+      "location": "Mumbai, India",
+      "url": "https://www.ongcindia.com/",
+      "startDate": "2019-10-01",
+      "endDate": "2021-07-01",
+      "summary": "Offshore crude-oil processing platform, Bombay High.",
+      "highlights": [
+        "Managed and designed power-system infrastructure from generation to distribution on an offshore crude-oil processing platform in Bombay High."
+      ]
+    },
+    {
+      "name": "Samsung Research Institute, Bengaluru",
+      "position": "Summer Intern",
+      "location": "Bengaluru, India",
+      "url": "https://research.samsung.com/",
+      "startDate": "2017-05-01",
+      "endDate": "2017-07-01",
+      "summary": "Natural-language number recognition for the Bixby AI assistant.",
+      "highlights": [
+        "Enhanced the numeric-recognition capability of Samsung's Bixby assistant, which previously used a rule-based method to detect numbers in user prompts."
+      ]
     }
   ],
   "education": [
     {
-      "institution": "Your University",
-      "url": "",
-      "area": "Your Field",
-      "studyType": "B.Tech / M.S. / Ph.D.",
-      "startDate": "2019-01-01",
-      "endDate": "2023-01-01",
-      "score": "",
-      "courses": []
+      "institution": "Indian Institute of Technology Delhi",
+      "url": "https://home.iitd.ac.in/",
+      "area": "Signal Processing and Communication Engineering",
+      "studyType": "Master of Technology (M.Tech)",
+      "startDate": "2021-08-01",
+      "endDate": "2023-06-01",
+      "score": "CGPA: 9.64/10",
+      "courses": [
+        "Fundamentals of Wireless Communications",
+        "Information Theory",
+        "Coding Theory",
+        "Introduction to Machine Learning",
+        "Detection and Estimation Theory",
+        "Reinforcement Learning",
+        "Signal Theory",
+        "Digital Communication",
+        "Microwave Theory & Lab",
+        "Wireless Communications Lab"
+      ]
+    },
+    {
+      "institution": "Indian Institute of Technology Delhi",
+      "url": "https://home.iitd.ac.in/",
+      "area": "Signal Processing and Communication Engineering",
+      "studyType": "Bachelor of Technology (B.Tech)",
+      "startDate": "2014-07-01",
+      "endDate": "2018-06-01",
+      "score": "CGPA: 9.0/10",
+      "courses": [
+        "Data Structures and Algorithms",
+        "Digital Electronics",
+        "Computer Architecture",
+        "Linear Algebra and Differential Equations",
+        "Probability and Stochastic Processes",
+        "Signals and Systems",
+        "Communication Engineering",
+        "Digital Signal Processing",
+        "Power Electronics",
+        "Control Theory",
+        "Power Systems Protection"
+      ]
     }
   ],
-  "publications": [],
-  "projects": [],
+  "publications": [
+    {
+      "name": "Performance Analysis and Optimization of Partitioned-IRS-Assisted NOMA Network",
+      "publisher": "IEEE Wireless Communications Letters",
+      "releaseDate": "2024-03-01",
+      "url": "https://doi.org/10.1109/LWC.2023.3342871",
+      "summary": "S. Kumar, A. Jee, and S. Prakriya. IEEE Wireless Communications Letters, vol. 13, no. 3, pp. 761-765, March 2024. doi:10.1109/LWC.2023.3342871."
+    }
+  ],
+  "projects": [
+    {
+      "name": "Real-time Background Subtraction with GMMs",
+      "description": "Implemented real-time background subtraction using Gaussian Mixture Models (Stauffer-Grimson) for object tracking in Python.",
+      "keywords": ["Python", "Computer Vision", "GMM"]
+    },
+    {
+      "name": "SLAM-based Collision-Avoidance Robot",
+      "description": "Developed a collision-avoidance robot system in ROS with SLAM-based navigation and sensor fusion (SONAR + vision) on a Pioneer 3AT robot.",
+      "keywords": ["ROS", "SLAM", "Sensor Fusion"]
+    },
+    {
+      "name": "Viterbi Decoder for Convolutional Codes",
+      "description": "Built a Viterbi decoder in MATLAB for convolutional codes to analyze error-correction performance.",
+      "keywords": ["MATLAB", "Coding Theory"]
+    },
+    {
+      "name": "Linear Block Codes Study",
+      "description": "Implemented and compared linear block codes (Hamming, repetition) for robustness against random and burst errors.",
+      "keywords": ["MATLAB", "Error Correction"]
+    }
+  ],
   "volunteer": [],
-  "awards": [],
+  "awards": [
+    {
+      "title": "JEE Advanced 2014 — All India Rank 397",
+      "date": "2014-06-01",
+      "awarder": "Joint Entrance Examination (Advanced)",
+      "summary": "Secured All India Rank 397 out of ~1.4 million candidates in JEE Advanced 2014."
+    },
+    {
+      "title": "Institute Merit Award, IIT Delhi",
+      "date": "2015-01-01",
+      "awarder": "IIT Delhi",
+      "summary": "Recognized among the top 7% of students (Semester Merit Award) in the 2nd and 8th semesters."
+    },
+    {
+      "title": "Teaching Assistant — Digital Signal Processing",
+      "date": "2022-01-01",
+      "awarder": "IIT Delhi",
+      "summary": "Teaching Assistant for the Digital Signal Processing course at both undergraduate and postgraduate levels."
+    }
+  ],
   "certificates": [],
   "skills": [
     {
-      "name": "Machine Learning",
+      "name": "Domain Knowledge",
       "level": "",
-      "keywords": ["PyTorch", "Deep Learning", "NLP"]
+      "keywords": ["LLM/VLM Architectures", "Wireless System Design", "Digital Signal Processing", "MIMO", "OFDM", "Wi-Fi & 5G NR Standards"]
     },
     {
-      "name": "Embedded Systems",
+      "name": "Fundamentals",
       "level": "",
-      "keywords": ["C/C++", "ESP32", "Firmware"]
+      "keywords": ["Linear Algebra", "Probability & Stochastic Processes", "Detection & Estimation Theory", "Machine Learning"]
+    },
+    {
+      "name": "Programming",
+      "level": "",
+      "keywords": ["Python", "C++"]
+    },
+    {
+      "name": "Frameworks",
+      "level": "",
+      "keywords": ["PyTorch"]
+    },
+    {
+      "name": "Hardware Platforms",
+      "level": "",
+      "keywords": ["Raspberry Pi", "ESP32"]
     }
   ],
   "languages": [],
