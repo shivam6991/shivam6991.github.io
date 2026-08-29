@@ -2,14 +2,14 @@
 layout: about
 title: about
 permalink: /
-subtitle: Machine learning · embedded systems · <a href="/blog/">writing</a>
+subtitle: Senior Systems Engineer at <a href="https://www.qualcomm.com/research">Qualcomm Research</a> — XR edge AI, wireless &amp; signal processing
 
 profile:
   align: right
   image: prof_pic.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p>📍 Add your city here</p>
+    <p>📍 Bengaluru, India</p>
     <p><a href="mailto:shivam361996@gmail.com">shivam361996@gmail.com</a></p>
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
@@ -30,8 +30,10 @@ latest_posts:
 
 Hi, I'm **Shivam** 👋
 
-I'm an engineer and researcher interested in the intersection of **machine learning** and **systems** — from training and deploying models to the embedded and hardware side of things. I like building projects that span the full stack, from silicon to software.
+I'm a **Senior Systems Engineer at Qualcomm Research** in Bengaluru, working on **XR edge AI** — deploying and optimizing quantized vision–language models and low-power multimodal pipelines on Snapdragon XR smart glasses, under tight latency, memory, and power budgets.
 
-This site is where I keep a running log of what I'm learning and making: short technical notes, deep-dives, and the occasional project write-up. Head over to the [blog](/blog/) to see the latest, or browse my [projects](/projects/).
+Before XR I worked deep in **wireless and signal processing**: 5G-Advanced positioning and 6G ISAC, and Wi-Fi 8 (60 GHz + sub-6 GHz) prototyping — filing 40 patents along the way on positioning and sensing. I did my **M.Tech and B.Tech at IIT Delhi**, both in signal processing and communications.
 
-Feel free to reach out — the best way to get in touch is by [email](mailto:shivam361996@gmail.com).
+I'm drawn to problems that span the whole stack, from the math down to the silicon — Python and C++, PyTorch, and hands-on embedded work on Raspberry Pi and ESP32.
+
+This site is where I write about what I'm learning — mostly ML, inference, and systems. Take a look at the [blog](/blog/) or my [CV](/cv/), or reach me by [email](mailto:shivam361996@gmail.com).
