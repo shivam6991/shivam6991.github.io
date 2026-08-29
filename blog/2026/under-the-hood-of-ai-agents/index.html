@@ -1,0 +1,348 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Under the Hood of AI Agents</title> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&amp;family=Figtree:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap"> <style>
+  :root{
+    /* light palette (also the un-stamped default) */
+    --ground:#F4F5F0;
+    --surface:#FBFBF8;
+    --surface-2:#EEEFE8;
+    --ink:#1B2621;
+    --muted:#5E6A62;
+    --faint:#8A948C;
+    --hair:rgba(27,38,33,.12);
+    --hair-strong:rgba(27,38,33,.22);
+    --brain:#B87A22;        /* model / knowing */
+    --brain-soft:#F3E6CE;
+    --act:#2E7C72;          /* harness / doing */
+    --act-soft:#D6E9E4;
+    --on-act:#ffffff;       /* text on a solid --act fill */
+    --shadow:0 1px 2px rgba(27,38,33,.05),0 8px 30px rgba(27,38,33,.06);
+    --note:#FDF7E9;
+    --note-line:rgba(184,122,34,.35);
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#121714;
+      --surface:#1A211D;
+      --surface-2:#222A25;
+      --ink:#E9ECE4;
+      --muted:#9EAAA1;
+      --faint:#75817A;
+      --hair:rgba(233,236,228,.13);
+      --hair-strong:rgba(233,236,228,.24);
+      --brain:#E0A84A;
+      --brain-soft:#3A2F18;
+      --act:#59B3A6;
+      --act-soft:#183430;
+      --on-act:#0c110f;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 34px rgba(0,0,0,.36);
+      --note:#241E12;
+      --note-line:rgba(224,168,74,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#121714;
+    --surface:#1A211D;
+    --surface-2:#222A25;
+    --ink:#E9ECE4;
+    --muted:#9EAAA1;
+    --faint:#75817A;
+    --hair:rgba(233,236,228,.13);
+    --hair-strong:rgba(233,236,228,.24);
+    --brain:#E0A84A;
+    --brain-soft:#3A2F18;
+    --act:#59B3A6;
+    --act-soft:#183430;
+    --on-act:#0c110f;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 34px rgba(0,0,0,.36);
+    --note:#241E12;
+    --note-line:rgba(224,168,74,.4);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:18px;
+    line-height:1.65;
+    margin:0;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  .col{max-width:640px}
+  p{margin:0 0 1.1em}
+  a{color:var(--act);text-underline-offset:3px}
+
+  /* ---- type ---- */
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:600;line-height:1.12;text-wrap:balance;letter-spacing:-.01em}
+  h2{font-size:clamp(1.7rem,4.4vw,2.35rem);margin:0 0 .5em}
+  h3{font-size:1.28rem;margin:0 0 .4em;font-weight:600}
+  .eyebrow{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--act);font-weight:500;margin:0 0 .9em;
+    display:flex;align-items:center;gap:.7em;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--act);opacity:.6}
+  .lead{font-size:1.22rem;line-height:1.55;color:var(--ink)}
+  .muted{color:var(--muted)}
+  strong{font-weight:600}
+  code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.9em}
+  code{background:var(--surface-2);padding:.08em .38em;border-radius:5px;font-size:.82em}
+
+  /* ---- hero ---- */
+  header.hero{padding:clamp(64px,12vw,120px) 0 clamp(40px,7vw,70px)}
+  .hero .kicker{
+    font-family:"IBM Plex Mono",monospace;font-size:.74rem;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 1.4em;
+  }
+  .hero h1{
+    font-family:"Fraunces",Georgia,serif;
+    font-size:clamp(2.6rem,8vw,4.6rem);
+    font-weight:600;line-height:1.02;letter-spacing:-.02em;margin:0 0 .5em;
+  }
+  .hero h1 em{font-style:italic;color:var(--brain);font-weight:500}
+  .hero .sub{font-size:clamp(1.15rem,2.6vw,1.4rem);color:var(--muted);max-width:34ch;line-height:1.45}
+  .hero .who{
+    margin-top:2.4em;font-size:.94rem;color:var(--faint);
+    border-left:2px solid var(--hair-strong);padding-left:1em;max-width:46ch;
+  }
+
+  /* ---- sections ---- */
+  section{padding:clamp(34px,6vw,60px) 0}
+  section + section{border-top:1px solid var(--hair)}
+
+  /* ---- panels / diagrams ---- */
+  .panel{
+    background:var(--surface);border:1px solid var(--hair);
+    border-radius:16px;padding:clamp(20px,3.5vw,30px);margin:1.8em 0;
+    box-shadow:var(--shadow);
+  }
+  .panel .cap{
+    font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--faint);margin:0 0 1.2em;
+  }
+  figure{margin:0}
+  figcaption{font-size:.85rem;color:var(--faint);margin-top:1em;text-align:center}
+
+  /* two-up */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:620px){.two{grid-template-columns:1fr}}
+
+  .tile{border:1px solid var(--hair);border-radius:13px;padding:18px 18px 20px;background:var(--surface)}
+  .tile h4{margin:.1em 0 .5em;font-size:1.02rem;font-family:"Figtree",sans-serif;font-weight:600}
+  .tile p{margin:0;font-size:.96rem;color:var(--muted);line-height:1.5}
+  .tag{
+    display:inline-flex;align-items:center;gap:.5em;font-family:"IBM Plex Mono",monospace;
+    font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;
+    padding:.32em .7em;border-radius:999px;
+  }
+  .tag.brain{background:var(--brain-soft);color:var(--brain)}
+  .tag.act{background:var(--act-soft);color:var(--act)}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .dot.brain{background:var(--brain)}
+  .dot.act{background:var(--act)}
+
+  /* model vs harness split diagram */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:14px;overflow:hidden;border:1px solid var(--hair-strong)}
+  @media(max-width:560px){.split{grid-template-columns:1fr}}
+  .split > div{padding:22px}
+  .split .s-brain{background:var(--brain-soft)}
+  .split .s-act{background:var(--act-soft)}
+  .split h4{font-family:"Fraunces",serif;font-size:1.15rem;margin:.4em 0 .5em;font-weight:600}
+  .split ul{margin:.6em 0 0;padding-left:1.1em}
+  .split li{font-size:.92rem;line-height:1.5;margin-bottom:.35em;color:var(--ink)}
+  .split .icn{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+  .s-brain .icn{color:var(--brain)}
+  .s-act .icn{color:var(--act)}
+
+  /* the loop */
+  .loop{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;justify-content:center}
+  .loop .node{
+    flex:1 1 130px;min-width:120px;text-align:center;padding:16px 12px;border-radius:12px;
+    background:var(--surface-2);border:1px solid var(--hair);position:relative;
+  }
+  .loop .node .n{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.12em;color:var(--faint);text-transform:uppercase}
+  .loop .node .t{font-weight:600;font-size:1rem;margin:.3em 0 .15em;font-family:"Fraunces",serif}
+  .loop .node .d{font-size:.83rem;color:var(--muted);line-height:1.4}
+  .loop .arrow{align-self:center;color:var(--act);font-size:1.3rem;padding:0 6px;flex:0 0 auto}
+  @media(max-width:640px){
+    .loop{flex-direction:column}
+    .loop .arrow{transform:rotate(90deg);padding:4px 0}
+  }
+
+  /* interactive weather demo */
+  .demo{margin:1.8em 0}
+  .demo .stage{
+    background:var(--surface);border:1px solid var(--hair);border-radius:16px;
+    padding:clamp(18px,3vw,26px);box-shadow:var(--shadow);
+  }
+  .steps{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+  .steps button{
+    font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.06em;
+    border:1px solid var(--hair-strong);background:transparent;color:var(--muted);
+    padding:.5em .8em;border-radius:999px;cursor:pointer;transition:all .18s ease;
+  }
+  .steps button:hover{border-color:var(--act);color:var(--act)}
+  .steps button[aria-current="true"]{background:var(--act);color:var(--on-act);border-color:var(--act)}
+  .stagegrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  @media(max-width:560px){.stagegrid{grid-template-columns:1fr}}
+  .actor{border-radius:12px;padding:16px;border:1px solid var(--hair);transition:all .25s ease}
+  .actor.on-brain{border-color:var(--brain);background:var(--brain-soft)}
+  .actor.on-act{border-color:var(--act);background:var(--act-soft)}
+  .actor .role{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:.5em;display:flex;align-items:center;gap:.5em}
+  .actor .say{font-size:.98rem;line-height:1.5;min-height:3em}
+  .actor.dim{opacity:.45}
+  .note{
+    background:var(--note);border:1px dashed var(--note-line);border-radius:10px;
+    padding:12px 14px;font-family:"IBM Plex Mono",monospace;font-size:.82rem;line-height:1.5;
+    color:var(--ink);margin-top:12px;
+  }
+  .note .lbl{color:var(--brain);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4em}
+  .stepnav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:12px}
+  .stepnav button{
+    font-family:"Figtree",sans-serif;font-weight:600;font-size:.92rem;
+    border:1px solid var(--hair-strong);background:var(--surface);color:var(--ink);
+    padding:.6em 1.2em;border-radius:10px;cursor:pointer;transition:all .18s ease;
+  }
+  .stepnav button:hover:not(:disabled){border-color:var(--act);color:var(--act)}
+  .stepnav button:disabled{opacity:.4;cursor:default}
+  .stepnav .count{font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--faint)}
+  .explain{margin-top:14px;font-size:.95rem;color:var(--muted);line-height:1.55;min-height:2.6em}
+
+  /* skills / recipe cards */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:560px){.cards{grid-template-columns:1fr}}
+  .rcard{background:var(--surface);border:1px solid var(--hair);border-top:3px solid var(--brain);border-radius:11px;padding:15px}
+  .rcard .rt{font-weight:600;font-size:.96rem;margin-bottom:.3em}
+  .rcard .rd{font-size:.85rem;color:var(--muted);line-height:1.45}
+
+  /* parallel agents */
+  .fleet{display:flex;flex-direction:column;align-items:center;gap:0}
+  .mgr{background:var(--act);color:var(--on-act);border-radius:12px;padding:12px 20px;font-weight:600;text-align:center;box-shadow:var(--shadow)}
+  .fleet .stem{width:1px;height:22px;background:var(--hair-strong)}
+  .workers{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%}
+  @media(max-width:560px){.workers{grid-template-columns:1fr 1fr}}
+  .worker{background:var(--surface-2);border:1px solid var(--hair);border-radius:10px;padding:12px 10px;text-align:center}
+  .worker .wn{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--act);margin-bottom:.35em}
+  .worker .wd{font-size:.8rem;color:var(--muted);line-height:1.35}
+
+  /* pull quote / callout */
+  .callout{
+    border-left:3px solid var(--brain);padding:.2em 0 .2em 1.2em;margin:1.6em 0;
+    font-family:"Fraunces",serif;font-size:1.3rem;line-height:1.4;font-style:italic;color:var(--ink);
+  }
+
+  .recap{background:var(--surface);border:1px solid var(--hair);border-radius:16px;padding:clamp(22px,4vw,34px);box-shadow:var(--shadow)}
+  .recap ol{margin:0;padding-left:1.3em}
+  .recap li{margin-bottom:.7em;line-height:1.55}
+  .recap li strong{color:var(--ink)}
+
+  footer{padding:50px 0 70px;color:var(--faint);font-size:.85rem;border-top:1px solid var(--hair)}
+  footer .mono{font-family:"IBM Plex Mono",monospace;letter-spacing:.04em}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important}
+  }
+
+  .backlink{display:inline-flex;align-items:center;gap:.5em;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);text-decoration:none;margin:0 0 1.6em}
+  .backlink:hover{color:var(--act)}
+</style> </head> <body> <header class="hero"> <div class="wrap"> <a class="backlink" href="/">← Back to home</a> <p class="kicker">A plain-language guide · no jargon required</p> <h1>What's really<br>happening <em>under the hood</em> of an AI agent</h1> <p class="sub">It feels like magic. It isn't. It's a very well-read brain, wired into a workshop.</p> <p class="who">Written for someone who has never touched code — so that the next time an "AI agent" does something impressive, you can picture exactly how it pulled it off.</p> </div> </header> <main> <section> <div class="wrap col"> <p class="eyebrow">Start here</p> <h2>Two parts, always</h2> <p class="lead">Every AI agent — the coding assistant, the research assistant, the little bot that books your meetings — is built from just two things stacked together.</p> <p>There's the <strong style="color:var(--brain)">model</strong>, which is the brain: it thinks, reads, and writes. And there's the <strong style="color:var(--act)">harness</strong>, which is the workshop built around that brain: it gives the brain memory, tools, instructions, and a way to actually <em>do</em> things in the world.</p> <p>Keep these two straight and the rest of this page falls into place. Almost everything that looks magical is really just the harness handing the brain the right thing at the right moment.</p> <div class="split panel" style="padding:0"> <div class="s-brain"> <span class="icn">◆ The model — the brain</span> <h4>Knows &amp; reasons</h4> <ul> <li>Read an enormous amount once, long ago</li> <li>Can reason, explain, translate, write</li> <li>Great at language and patterns</li> <li>On its own: no memory, no internet, no hands</li> </ul> </div> <div class="s-act"> <span class="icn">▲ The harness — the workshop</span> <h4>Remembers &amp; acts</h4> <ul> <li>Keeps notes so nothing is forgotten</li> <li>Hands the brain tools (search, calculator, calendar)</li> <li>Pins up instructions for the job</li> <li>Runs the loop that turns thinking into doing</li> </ul> </div> </div> </div> </section> <section> <div class="wrap col"> <p class="eyebrow">The model</p> <h2>A brilliant person in a sealed room</h2> <p>Picture the smartest, most well-read person you know. Now lock them in a room with no phone, no internet, and no way to remember today once it's over. Slide a question under the door on a piece of paper, and they slide back a beautifully written answer. That is a <strong>model</strong>.</p> <p>It has read a staggering amount — books, articles, conversations, code — but all of that reading stopped at some point in the past. So the model is extraordinary at <em>thinking, explaining, and writing</em>, and helpless at anything that needs <em>fresh information</em> or <em>action</em>.</p> <div class="two"> <div class="tile"> <span class="tag brain"><span class="dot brain"></span>Can do</span> <h4>Reason with what it knows</h4> <p>Explain a tax rule, draft an email, spot a bug in code, summarise a messy paragraph, translate a menu.</p> </div> <div class="tile"> <span class="tag" style="background:var(--surface-2);color:var(--faint)"><span class="dot" style="background:var(--faint)"></span>Can't do — alone</span> <h4>Reach the live world</h4> <p>Tell you today's weather, open your files, send a message, or remember what you said yesterday.</p> </div> </div> <p style="margin-top:1.6em">This is the crucial idea: <strong>the model by itself can only talk.</strong> Everything else — looking things up, remembering, taking action — is the harness's job. Which is exactly where we go next.</p> <p class="muted" style="font-size:.95rem">One more thing people mix up: the model's <em>capabilities</em> are just how good the brain is — how well it reasons, how carefully it follows instructions, how much it can hold in its head at once. A stronger model is a smarter person in the room. It still can't see outside the room. That's a harness problem, not a brain problem.</p> </div> </section> <section> <div class="wrap col"> <p class="eyebrow">The harness</p> <h2>The workshop around the brain</h2> <p>The harness is the room set up around that sealed-off genius. On its own the brain can only answer notes. The harness is what turns it into a <strong>worker who gets things done</strong>. It does four jobs.</p> <div class="two" style="margin:1.6em 0 0"> <div class="tile"> <h4>1 · It keeps memory</h4> <p>The brain forgets everything between notes. The harness keeps a running transcript so the conversation actually builds on itself.</p> </div> <div class="tile"> <h4>2 · It hands over tools</h4> <p>A phone to the weather service, a calculator, a way to read a file. The brain asks; the harness fetches.</p> </div> <div class="tile"> <h4>3 · It pins up the instructions</h4> <p>A standing note above the desk saying who this worker is and how to behave. (That's the <em>system prompt</em> — coming up.)</p> </div> <div class="tile"> <h4>4 · It runs the loop</h4> <p>Think, act, look at the result, think again — over and over, until the job is done. This loop is the whole trick.</p> </div> </div> <p class="callout">A model is a brain. An agent is a brain the harness has given hands, memory, and a to-do list.</p> </div> </section> <section> <div class="wrap col"> <p class="eyebrow">The loop</p> <h2>How thinking becomes doing</h2> <p>Here's the rhythm every agent runs on. It's not a single flash of genius — it's a patient loop, repeated as many times as the task needs.</p> <div class="panel"> <p class="cap">The agent loop</p> <div class="loop"> <div class="node"> <div class="n">01 · Think</div> <div class="t">Plan</div> <div class="d">The brain decides what it needs next.</div> </div> <div class="arrow" aria-hidden="true">→</div> <div class="node"> <div class="n">02 · Act</div> <div class="t">Use a tool</div> <div class="d">It asks the harness to fetch or do something.</div> </div> <div class="arrow" aria-hidden="true">→</div> <div class="node"> <div class="n">03 · Observe</div> <div class="t">Read result</div> <div class="d">The harness hands back what happened.</div> </div> <div class="arrow" aria-hidden="true">↺</div> <div class="node"> <div class="n">04 · Repeat</div> <div class="t">or Answer</div> <div class="d">Loop again, or reply when done.</div> </div> </div> </div> <p>Now let's watch it run on the simplest possible question.</p> </div> </section> <section> <div class="wrap col"> <p class="eyebrow">Toy example #1</p> <h2>"What's the temperature in Mumbai today?"</h2> <p>You'd think the AI just <em>knows</em> this. It doesn't — remember, the brain has been sealed in the room since before today existed. Step through what actually happens. Click along.</p> <div class="demo"> <div class="steps" id="steps" role="tablist" aria-label="Steps of the weather query"></div> <div class="stage"> <div class="stagegrid"> <div class="actor" id="actorBrain"> <div class="role"> <span class="dot brain"></span>The model · the brain</div> <div class="say" id="brainSay"></div> </div> <div class="actor" id="actorAct"> <div class="role"> <span class="dot act"></span>The harness · the workshop</div> <div class="say" id="actSay"></div> </div> </div> <div class="note" id="noteBox" hidden> <span class="lbl" id="noteLbl">Note passed</span> <span id="noteText"></span> </div> <p class="explain" id="explain"></p> <div class="stepnav"> <button id="prev" type="button">← Back</button> <span class="count" id="count"></span> <button id="next" type="button">Next →</button> </div> </div> </div> <p>Notice what happened: the brain never <em>knew</em> the temperature. It knew it <strong>needed</strong> the temperature, knew which tool to reach for, and knew how to phrase the answer once the harness handed back the number. The intelligence is in the reasoning; the fresh fact came from a tool. That division of labour is the entire game.</p> </div> </section> <section> <div class="wrap col"> <p class="eyebrow">Tools</p> <h2>What a "tool" actually is</h2> <p>A tool is just a <strong>specific action the harness knows how to perform on the brain's behalf.</strong> The weather lookup was one. But the same idea covers everything an agent can <em>do</em> rather than just <em>say</em>:</p> <div class="cards" style="margin:1.4em 0"> <div class="rcard" style="border-top-color:var(--act)"> <div class="rt">Search the web</div> <div class="rd">Fetch a live page or search result.</div> </div> <div class="rcard" style="border-top-color:var(--act)"> <div class="rt">Read a file</div> <div class="rd">Open a document on your computer.</div> </div> <div class="rcard" style="border-top-color:var(--act)"> <div class="rt">Run a calculation</div> <div class="rd">Do maths reliably, not by "feel".</div> </div> <div class="rcard" style="border-top-color:var(--act)"> <div class="rt">Send a message</div> <div class="rd">Post to Slack, email a colleague.</div> </div> <div class="rcard" style="border-top-color:var(--act)"> <div class="rt">Edit code</div> <div class="rd">Change a line in a real file and save it.</div> </div> <div class="rcard" style="border-top-color:var(--act)"> <div class="rt">Check a calendar</div> <div class="rd">See when you're free, book a slot.</div> </div> </div> <p>The brain never touches any of these directly. It writes a little request — <span class="mono">"read the file report.txt"</span> — and the harness carries it out and reports back. Give an agent more tools and it can do more; take them away and even a genius model can only chat. <strong>An agent's real-world power is mostly a question of which tools it's been handed.</strong></p> </div> </section> <section> <div class="wrap col"> <p class="eyebrow">The system prompt</p> <h2>The job description pinned above the desk</h2> <p>Here's a puzzle. A <strong>sales agent</strong> and a <strong>marketing agent</strong> might run on the <em>exact same brain</em> — the same model. So why do they behave so differently?</p> <p>Because of the note pinned above each one's desk. That standing instruction is called the <strong>system prompt</strong>: it tells the brain who it is, what it's here to do, what tone to use, and what to avoid — <em>before</em> a single question arrives. Same brilliant employee; two completely different job descriptions.</p> <div class="two" style="margin:1.6em 0"> <div class="tile" style="border-top:3px solid var(--brain)"> <span class="tag brain"><span class="dot brain"></span>System prompt · Sales</span> <h4 style="margin-top:.7em">"You are a sales assistant."</h4> <p>Qualify the lead, understand their budget, move toward booking a demo. Be warm, persuasive, and concrete about pricing. Never over-promise.</p> </div> <div class="tile" style="border-top:3px solid var(--act)"> <span class="tag act"><span class="dot act"></span>System prompt · Marketing</span> <h4 style="margin-top:.7em">"You are a marketing strategist."</h4> <p>Find the audience, sharpen the message, draft campaign copy. Think in themes and channels. Favour clarity and brand voice over closing a single deal.</p> </div> </div> <p>Swap those two notes and the sales agent starts writing campaigns while the marketing agent starts chasing deals — with no change to the underlying model at all. <strong>The system prompt is how one brain becomes a hundred different specialists.</strong> It's also where a company bakes in its rules: "always cite your source", "never share internal pricing", "reply in Hindi if the customer writes in Hindi".</p> </div> </section> <section> <div class="wrap col"> <p class="eyebrow">Skills</p> <h2>Recipe cards in the drawer</h2> <p>A system prompt sets the <em>overall</em> job. But some tasks have a right way of being done that's too detailed to keep pinned on the wall all the time. That's what a <strong>skill</strong> is: a written playbook the worker pulls out of a drawer <em>only when a matching task comes up.</em></p> <p>Think of a folder of recipe cards. Each card has a title, a note about <em>when</em> to use it, and step-by-step instructions. The worker glances at the titles, and when a task matches — "ah, the customer wants a PowerPoint" — it pulls that one card and follows it.</p> <div class="panel"> <p class="cap">A drawer of skills</p> <div class="cards"> <div class="rcard"> <div class="rt">Make a slide deck</div> <div class="rd">When someone asks for a presentation → build clean slides, one idea each.</div> </div> <div class="rcard"> <div class="rt">Write in our brand voice</div> <div class="rd">When drafting anything public → use the tone guide, avoid these words.</div> </div> <div class="rcard"> <div class="rt">Do expense reports</div> <div class="rd">When handed receipts → sort, total, flag anything over the limit.</div> </div> </div> </div> <h3 style="margin-top:1.6em">So how do people <em>write</em> a skill?</h3> <p>This is the reassuring part: a skill is mostly just <strong>clear instructions written in plain English</strong> — not code. You write down, as if training a new hire, three things: a short <strong>name</strong>, a line about <strong>when to use it</strong>, and the <strong>steps</strong> to follow. You can also tuck in an example or a checklist. The harness keeps this in the drawer and slips it to the brain at the right moment.</p> <p>That's why skills are so powerful for ordinary teams: your best salesperson can capture <em>how they actually do it</em> in a page of instructions, and every agent can now follow that recipe perfectly, every time. Tools give an agent new <em>hands</em>; skills give it new <em>know-how</em>.</p> </div> </section> <section> <div class="wrap col"> <p class="eyebrow">Toy example #2 · scaling up</p> <h2>Now the hard task: "Research this market for me"</h2> <p>A quick weather lookup is one trip around the loop. But suppose you ask for something big — <em>"Put together market research on electric scooters in India: the main players, their pricing, what customers complain about, and where the gaps are."</em></p> <p>One worker <em>could</em> grind through this alone, tool call after tool call. But it's slow, and it's a lot to hold in one head. So a capable harness does what a good manager does: <strong>it breaks the job into pieces and hands each piece to its own copy of the worker, all at once.</strong></p> <div class="panel"> <p class="cap">One manager, several agents working in parallel</p> <div class="fleet"> <div class="mgr">Lead agent — splits the job &amp; combines the findings</div> <div class="stem" aria-hidden="true"></div> <div class="workers"> <div class="worker"> <div class="wn">Agent A</div> <div class="wd">List the main brands &amp; models</div> </div> <div class="worker"> <div class="wn">Agent B</div> <div class="wd">Gather pricing across sellers</div> </div> <div class="worker"> <div class="wn">Agent C</div> <div class="wd">Read reviews for complaints</div> </div> <div class="worker"> <div class="wn">Agent D</div> <div class="wd">Spot gaps &amp; opportunities</div> </div> </div> </div> <figcaption>Each sub-agent is the same brain + harness, just pointed at a smaller question.</figcaption> </div> <p>Each sub-agent runs its <em>own</em> think–act–observe loop, using search and file tools, following any relevant skills. When they finish, they hand their findings back to the lead agent, which reads all four, resolves overlaps, and writes the single report you asked for.</p> <p>That's the whole shape of "complex AI work". Not one impossibly-clever step — but <strong>a lot of simple loops, run in parallel, then stitched together.</strong> The same pattern builds a piece of software, plans an event, or reconciles a spreadsheet.</p> </div> </section> <section> <div class="wrap col"> <p class="eyebrow">The concrete example</p> <h2>Where you've seen all of this: a coding agent</h2> <p>A coding assistant like <strong>Claude Code</strong> is exactly the machine we've described, aimed at one profession. The brain is the same kind of model. Its <em>tools</em> are things a programmer needs: read a file, edit a file, run the program, search the project. Its <em>system prompt</em> says "you are a careful software engineer." Its <em>skills</em> are playbooks like "how to write a good commit" or "how we structure tests here." And it runs the same loop — read the code, make a change, run it, see the error, fix it, repeat — until the feature works.</p> <p>Now here's the leap: <strong>nothing about that shape is specific to coding.</strong> Swap the tools and the instructions and you have a coworker for a different job entirely.</p> <div class="two" style="margin:1.6em 0"> <div class="tile"> <h4> <span class="dot brain" style="margin-right:.5em"></span>Coding agent</h4> <p><strong>Tools:</strong> edit files, run code, search a codebase.<br><strong>Prompt:</strong> "careful engineer."<br><strong>Skills:</strong> testing, commit style.</p> </div> <div class="tile"> <h4> <span class="dot act" style="margin-right:.5em"></span>Office coworker agent</h4> <p><strong>Tools:</strong> read documents, send email, build a deck, check the calendar.<br><strong>Prompt:</strong> "helpful operations assistant."<br><strong>Skills:</strong> your report format, your brand voice.</p> </div> </div> <p>Same brain. Same harness idea. Same loop. Just a different kit on the desk. That's why one underlying technology can show up as a coding helper, a research analyst, a sales rep, and a marketing strategist — the differences you notice are almost entirely <em>tools, system prompt, and skills</em>, not four different kinds of intelligence.</p> </div> </section> <section> <div class="wrap col"> <p class="eyebrow">The whole thing, in one breath</p> <h2>So, no magic</h2> <div class="recap"> <ol> <li>A <strong>model</strong> is a brilliant, well-read brain that can only think, read, and write — sealed off from today's world.</li> <li>A <strong>harness</strong> is the workshop around it: memory, tools, instructions, and a loop.</li> <li> <strong>Tools</strong> are the specific actions the harness performs for the brain — a weather lookup, a file edit, a message. They're how an agent <em>does</em> instead of just <em>talks</em>.</li> <li>The <strong>system prompt</strong> is the job description that turns one brain into a sales rep, a marketer, or an engineer.</li> <li> <strong>Skills</strong> are plain-English recipe cards the worker pulls out when a matching task appears — new know-how, no code required.</li> <li>Hard jobs are just <strong>many small loops run in parallel</strong> by several sub-agents and stitched together by a lead.</li> </ol> </div> <p style="margin-top:1.6em">Next time an agent does something that makes you go <em>"how did it know that?"</em> — you can answer your own question. It didn't know. It figured out what it needed, reached for the right tool, read the result, and told you. Patiently, in a loop. That's the machine.</p> </div> </section> </main> <footer> <div class="wrap"> <a class="backlink" href="/" style="margin-bottom:0;">← Back to home</a> <p class="mono">A plain-language explainer · model + harness + tools + skills</p> <p>Made to be read at your own pace. Come back to it whenever the jargon piles up.</p> </div> </footer> <script>
+(function(){
+  var steps = [
+    {
+      label:"You ask",
+      brainOn:false, actOn:false,
+      brain:"(waiting)",
+      act:"You type: “What’s the temperature in Mumbai today?” The harness passes your question to the brain.",
+      brainDim:true, actDim:false,
+      explain:"Nothing clever yet — the harness just relays your question to the model, along with a list of tools it’s allowed to use."
+    },
+    {
+      label:"Brain thinks",
+      brainOn:true, actOn:false, brainDim:false, actDim:true,
+      brain:"“I don’t actually know today’s weather — that changes daily and I’ve been sealed in this room. But I have a weather tool. Let me use it.”",
+      act:"(waiting for a request)",
+      explain:"The key moment: the model recognises the limit of its own knowledge and decides to reach for a tool instead of guessing."
+    },
+    {
+      label:"Brain asks",
+      brainOn:true, actOn:false, brainDim:false, actDim:false,
+      brain:"Writes a small request and hands it out the door →",
+      act:"Receives the request and gets ready to run it.",
+      note:{lbl:"Note from brain → harness", text:"get_weather(city = “Mumbai”)"},
+      explain:"The brain can’t reach the internet itself. It writes a tiny, precise request — a tool call — and the harness will carry it out."
+    },
+    {
+      label:"Harness acts",
+      brainOn:false, actOn:true, brainDim:true, actDim:false,
+      brain:"(waiting for the result)",
+      act:"Calls the real weather service for Mumbai, gets the live reading, and prepares to hand it back.",
+      note:{lbl:"Result from harness → brain", text:"{ city: “Mumbai”, temp_c: 31, sky: “humid” }"},
+      explain:"This is the only step that touches the live world. The harness does the fetching; the fresh fact now exists inside the conversation."
+    },
+    {
+      label:"Brain answers",
+      brainOn:true, actOn:false, brainDim:false, actDim:true,
+      brain:"“Now I have the number. Let me phrase it nicely.” → “It’s about 31°C in Mumbai right now, and quite humid.”",
+      act:"(job done — delivers the reply to you)",
+      explain:"The model turns the raw result into a natural answer. It never ‘knew’ the temperature — it knew how to get it, and how to say it."
+    }
+  ];
+
+  var i = 0;
+  var stepsEl = document.getElementById('steps');
+  var brainSay = document.getElementById('brainSay');
+  var actSay = document.getElementById('actSay');
+  var actorBrain = document.getElementById('actorBrain');
+  var actorAct = document.getElementById('actorAct');
+  var noteBox = document.getElementById('noteBox');
+  var noteLbl = document.getElementById('noteLbl');
+  var noteText = document.getElementById('noteText');
+  var explain = document.getElementById('explain');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var count = document.getElementById('count');
+
+  steps.forEach(function(s, idx){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = (idx+1) + ' · ' + s.label;
+    b.setAttribute('role','tab');
+    b.addEventListener('click', function(){ i = idx; render(); });
+    stepsEl.appendChild(b);
+  });
+
+  function render(){
+    var s = steps[i];
+    brainSay.textContent = s.brain;
+    actSay.textContent = s.act;
+
+    actorBrain.classList.toggle('on-brain', s.brainOn);
+    actorAct.classList.toggle('on-act', s.actOn);
+    actorBrain.classList.toggle('dim', !!s.brainDim);
+    actorAct.classList.toggle('dim', !!s.actDim);
+
+    if(s.note){
+      noteBox.hidden = false;
+      noteLbl.textContent = s.note.lbl;
+      noteText.textContent = s.note.text;
+    } else {
+      noteBox.hidden = true;
+    }
+
+    explain.textContent = s.explain;
+    count.textContent = 'Step ' + (i+1) + ' of ' + steps.length;
+    prev.disabled = (i === 0);
+    next.disabled = (i === steps.length - 1);
+
+    Array.prototype.forEach.call(stepsEl.children, function(btn, idx){
+      btn.setAttribute('aria-current', idx === i ? 'true' : 'false');
+    });
+  }
+
+  prev.addEventListener('click', function(){ if(i>0){ i--; render(); }});
+  next.addEventListener('click', function(){ if(i<steps.length-1){ i++; render(); }});
+  render();
+})();
+</script> </body> </html>
